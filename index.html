@@ -7,7 +7,7 @@
 <meta name="application-name" content="Güerta">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Güerta">
+<meta name="apple-mobile-web-app-title" content=h"Güerta">
 <meta name="theme-color" content="#2C1A0E">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
@@ -3989,7 +3989,7 @@ renderCalidad();
   const s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
   s.onload = function() {
-    window.supabaseClient = window.supabase;
+    window.supabaseClient = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
     const ok = initSupabase();
     if (ok) {
       updateSyncStatus('syncing');
