@@ -3983,25 +3983,18 @@ renderCalidad();
   </div>
 </div>
 
-<script>
-// Supabase SDK cargado dinámicamente para no bloquear si no hay conexión
-(function() {
-  const s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
-  s.onload = function() {
-    window.supabaseClient = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
-    const ok = initSupabase();
-    if (ok) {
-      updateSyncStatus('syncing');
-      pullFromSupabase().then(pulled => {
-        if (pulled) renderAll();
-        updateSyncStatus(pulled ? 'ok' : 'error');
-      });
-    }
-  };
-  s.onerror = function() { updateSyncStatus('offline'); };
-  document.head.appendChild(s);
-})();
+<script type="module">
+// Supabase SDK cargado via ESM
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+window.supabaseClient = { createClient };
+const ok = initSupabase();
+if (ok) {
+  updateSyncStatus('syncing');
+  pullFromSupabase().then(pulled => {
+    if (pulled) renderAll();
+    updateSyncStatus(pulled ? 'ok' : 'error');
+  });
+}
 </script>
 </body>
 </html>
