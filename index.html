@@ -316,7 +316,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
   <div class="topbar">
     <div><div class="topbar-title">Recetas / mixes</div><div class="topbar-sub">Composición y costo calculado de cada presentación</div></div>
     <div class="topbar-actions">
-      <button class="btn btn-secondary" onclick="openModal('modal-margenes')">⚙ Márgenes globales</button>
+      <button class="btn btn-secondary" onclick="openMargenesModal()">⚙ Márgenes globales</button>
       <button class="btn btn-primary" onclick="openModal('modal-receta')">+ Nueva receta</button>
     </div>
   </div>
@@ -1145,7 +1145,9 @@ function showPage(id, event) {
 }
 
 function openModal(id) {
-  document.getElementById(id).classList.add('open');
+  const el = document.getElementById(id);
+  if (!el) { console.warn('Modal no encontrado:', id); return; }
+  el.classList.add('open');
   if (id==='modal-rend') populateRendInsumos();
   if (id==='modal-receta') {
     document.getElementById('rec-mg-may').value = DB.margenes.mayorista;
@@ -1153,9 +1155,21 @@ function openModal(id) {
     renderIngredientesModal(); calcReceta();
   }
   if (id==='modal-cotizacion') poblarSelectsCotizacion();
+  // Lógica modal ingreso (desglose + vendedores)
+  if (id==='modal-ingreso') {
+    if (!editingId) desgloseItemsIngreso = [];
+    setTimeout(() => {
+      renderVendedoresSelect('ing-vendedor', '');
+      if (!editingId) renderDesgloseItems();
+    }, 30);
+  }
 }
 
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+  editingId = null;
+}
 
 document.querySelectorAll('.modal-backdrop').forEach(b => {
   b.addEventListener('click', e => { if(e.target===b) b.classList.remove('open'); });
@@ -3326,20 +3340,7 @@ function renderVendedoresList() {
     </div>`).join('');
 }
 
-// Resetear modal ingreso al abrir
-const _openModalOrig = openModal;
-function openModal(id) {
-  if (id === 'modal-ingreso' && !editingId) {
-    desgloseItemsIngreso = [];
-  }
-  _openModalOrig(id);
-  if (id === 'modal-ingreso') {
-    setTimeout(() => {
-      renderVendedoresSelect('ing-vendedor','');
-      if (!editingId) renderDesgloseItems();
-    }, 30);
-  }
-}
+// openModal fusionado en definición principal
 
 // Asegurar que DB.vendedores exista
 if (!DB.vendedores) DB.vendedores = [];
