@@ -476,10 +476,36 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
       <button class="tab" onclick="switchFinTab('cashflow',this)">Cash Flow</button>
     </div>
     <div id="fin-tab-movs"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px">Concepto</th><th style="padding:10px 14px;text-align:right">Monto</th><th style="padding:10px 14px">Categoría</th><th style="padding:10px 14px">Socia/Vendedor</th><th style="padding:10px 14px">Nota</th><th style="padding:10px 14px">Acciones</th></tr></thead><tbody id="fin-tbody"></tbody></table></div></div></div>
-    <div id="fin-tab-graficos" style="display:none"><div class="grid-2">
-      <div class="card"><div class="card-header"><div><div class="card-title">Egresos por categoría</div></div><select id="chart-periodo" class="input" style="width:auto;font-size:12px" onchange="renderGraficos()"><option value="30">Últimos 30 días</option><option value="90">Últimos 90 días</option><option value="365">Último año</option><option value="0">Todo</option></select></div><div class="card-body"><div class="chart-container"><canvas id="chart-egresos-cat"></canvas></div></div></div>
-      <div class="card"><div class="card-header"><div><div class="card-title">Ingresos por canal</div></div></div><div class="card-body"><div class="chart-container"><canvas id="chart-ingresos-canal"></canvas></div></div></div>
-    </div></div>
+    <div id="fin-tab-graficos" style="display:none">
+      <div class="grid-2">
+        <div class="card"><div class="card-header"><div><div class="card-title">Egresos por categoría</div></div><select id="chart-periodo" class="input" style="width:auto;font-size:12px" onchange="renderGraficos()"><option value="30">Últimos 30 días</option><option value="90">Últimos 90 días</option><option value="365">Último año</option><option value="0">Todo</option></select></div><div class="card-body"><div class="chart-container"><canvas id="chart-egresos-cat"></canvas></div></div></div>
+        <div class="card"><div class="card-header"><div><div class="card-title">Ingresos por canal</div></div></div><div class="card-body"><div class="chart-container"><canvas id="chart-ingresos-canal"></canvas></div></div></div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <div class="card-header">
+          <div><div class="card-title">Comparativa mensual · Ingresos vs Egresos</div></div>
+          <select id="chart-meses" class="input" style="width:auto;font-size:12px" onchange="renderGraficos()">
+            <option value="6">Últimos 6 meses</option>
+            <option value="12" selected>Últimos 12 meses</option>
+            <option value="24">Últimos 24 meses</option>
+            <option value="0">Todo</option>
+          </select>
+        </div>
+        <div class="card-body"><div style="height:260px;position:relative"><canvas id="chart-mensual"></canvas></div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-header"><div class="card-title">Detalle mensual</div></div>
+        <div class="card-body" style="padding:0"><div class="table-wrap">
+          <table><thead><tr>
+            <th>Mes</th>
+            <th style="text-align:right">Ingresos</th>
+            <th style="text-align:right">Egresos</th>
+            <th style="text-align:right">Resultado</th>
+            <th style="text-align:right">Var. resultado</th>
+          </tr></thead><tbody id="tabla-mensual"></tbody></table>
+        </div></div>
+      </div>
+    </div>
     <div id="fin-tab-socios" style="display:none">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
         <label class="label" style="margin:0">Período:</label>
@@ -2216,7 +2242,7 @@ function renderFinanzas() {
 }
 
 // ── GRÁFICOS ──
-let chartEgresosCat=null,chartIngresosCanal=null;
+let chartEgresosCat=null,chartIngresosCanal=null,chartMensual=null;
 function renderGraficos() {
   const dias=parseInt(document.getElementById('chart-periodo')?.value||30);
   const desde=new Date();if(dias>0)desde.setDate(desde.getDate()-dias);else desde.setFullYear(2000);
@@ -2230,6 +2256,57 @@ function renderGraficos() {
   const cI=document.getElementById('chart-ingresos-canal');
   if(cI){if(chartIngresosCanal)chartIngresosCanal.destroy();
     if(Object.keys(ingCat).length)chartIngresosCanal=new Chart(cI,{type:'doughnut',data:{labels:Object.keys(ingCat),datasets:[{data:Object.values(ingCat),backgroundColor:['#2d6a4f','#52b788','#95d5b2','#d8f3dc','#1b4332'],borderWidth:2,borderColor:'#FAF5EE'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{family:"'Lato',sans-serif",size:12},color:'#2d6a4f'}}}}});}
+
+  // ── Comparativa mensual ──
+  const nMeses=parseInt(document.getElementById('chart-meses')?.value||12);
+  const todosLosMeses=[...new Set(DB.finanzas.map(m=>m.fecha.substring(0,7)))].sort();
+  const mesesFil=nMeses>0?todosLosMeses.slice(-nMeses):todosLosMeses;
+  const byMes={};
+  mesesFil.forEach(m=>{byMes[m]={ing:0,egr:0};});
+  DB.finanzas.forEach(m=>{const mes=m.fecha.substring(0,7);if(!byMes[mes])return;if(m.tipo==='ingreso')byMes[mes].ing+=m.monto;else byMes[mes].egr+=m.monto;});
+  const mesLabels=mesesFil.map(m=>{const[y,mo]=m.split('-');return new Date(parseInt(y),parseInt(mo)-1,1).toLocaleDateString('es-AR',{month:'short',year:'2-digit'});});
+  const ingData=mesesFil.map(m=>byMes[m].ing);
+  const egrData=mesesFil.map(m=>byMes[m].egr);
+  const resData=mesesFil.map(m=>byMes[m].ing-byMes[m].egr);
+  const cM=document.getElementById('chart-mensual');
+  if(cM){
+    if(chartMensual)chartMensual.destroy();
+    if(mesesFil.length)chartMensual=new Chart(cM,{
+      type:'bar',
+      data:{labels:mesLabels,datasets:[
+        {label:'Ingresos',data:ingData,backgroundColor:'rgba(45,106,79,.7)',borderRadius:4,order:2},
+        {label:'Egresos', data:egrData,backgroundColor:'rgba(171,120,67,.7)',borderRadius:4,order:2},
+        {label:'Resultado',data:resData,type:'line',borderColor:'#6D3914',backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:resData.map(v=>v>=0?'#2d6a4f':'#c0392b'),tension:0.3,order:1},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{font:{family:"'Lato',sans-serif",size:12},color:'#6D3914'}},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: $${fmt(ctx.parsed.y,0)}`}}},
+        scales:{
+          y:{ticks:{callback:v=>'$'+fmt(v,0),font:{family:"'DM Mono',monospace",size:11},color:'#AB7843'},grid:{color:'rgba(0,0,0,.05)'}},
+          x:{ticks:{font:{family:"'Lato',sans-serif",size:11},color:'#6D3914'},grid:{display:false}},
+        }
+      }
+    });
+  }
+  // Tabla mensual
+  const tablaEl=document.getElementById('tabla-mensual');
+  if(tablaEl){
+    if(!mesesFil.length){tablaEl.innerHTML='<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text3)">Sin datos</td></tr>';return;}
+    tablaEl.innerHTML=mesesFil.map((mes,i)=>{
+      const d=byMes[mes],res=d.ing-d.egr;
+      const resPrev=i>0?byMes[mesesFil[i-1]].ing-byMes[mesesFil[i-1]].egr:null;
+      const varPct=resPrev!==null&&resPrev!==0?Math.round((res-resPrev)/Math.abs(resPrev)*100):null;
+      const varStr=varPct!==null?`<span style="color:${varPct>=0?'var(--accent)':'#c0392b'};font-weight:600">${varPct>=0?'▲':'▼'} ${Math.abs(varPct)}%</span>`:'<span style="color:var(--text3)">—</span>';
+      const[y,mo]=mes.split('-');
+      const label=new Date(parseInt(y),parseInt(mo)-1,1).toLocaleDateString('es-AR',{month:'long',year:'numeric'});
+      return `<tr style="border-bottom:1px solid var(--bg2)">
+        <td style="padding:10px 14px;font-weight:500;text-transform:capitalize">${label}</td>
+        <td style="padding:10px 14px;text-align:right;font-family:'DM Mono',monospace;color:var(--accent)">$${fmt(d.ing,0)}</td>
+        <td style="padding:10px 14px;text-align:right;font-family:'DM Mono',monospace;color:var(--amber)">$${fmt(d.egr,0)}</td>
+        <td style="padding:10px 14px;text-align:right;font-family:'DM Mono',monospace;font-weight:700;color:${res>=0?'var(--accent)':'#c0392b'}">${res>=0?'+':'−'}$${fmt(Math.abs(res),0)}</td>
+        <td style="padding:10px 14px;text-align:right">${varStr}</td>
+      </tr>`;
+    }).join('');
+  }
 }
 function switchFinTab(tab,btn) {
   ['movs','graficos','socios','pe','cashflow'].forEach(t=>{const el=document.getElementById('fin-tab-'+t);if(el)el.style.display=t===tab?'':'none';});
