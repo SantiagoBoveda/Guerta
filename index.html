@@ -50,7 +50,7 @@ body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);min-he
 .topbar-sub{font-size:13px;color:var(--text2);margin-top:1px}
 .topbar-actions{display:flex;gap:8px;align-items:center}
 .page-content{padding:28px 32px;flex:1}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:visible}
 .card-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
 .card-title{font-weight:600;font-size:15px}
 .card-subtitle{font-size:12px;color:var(--text2);margin-top:2px}
@@ -69,8 +69,8 @@ body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);min-he
 .btn-secondary{background:var(--bg2);color:var(--text2);border-color:var(--border)}
 .btn-danger{background:var(--red-bg);color:var(--red);border-color:#f0c4b8}
 .btn-danger:hover{background:#fad8cc}
-.btn-sm{padding:6px 12px;font-size:12px}
-.btn-icon{padding:7px}
+.btn-sm{padding:6px 12px;font-size:12px;position:relative;z-index:1}
+.btn-icon{padding:7px;position:relative;z-index:1}
 .tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--bg2);border-radius:10px;padding:4px;width:fit-content}
 .tab{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);border:none;background:none;transition:all .15s}
 .tab:hover{color:var(--text)}
@@ -81,7 +81,8 @@ thead tr{border-bottom:1px solid var(--border)}
 th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
 td{padding:13px 14px;font-size:14px;color:var(--text);border-bottom:1px solid var(--bg2);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--bg)}
+tr:hover td{background:var(--bg);position:relative}
+tr:hover .td-actions{background:var(--bg)}
 .mono{font-family:'DM Mono',monospace;font-size:13px}
 .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
 .badge-green{background:var(--accent-bg);color:var(--accent)}
@@ -132,6 +133,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
 /* Tabla comparativa proveedores */
 .price-compare-table th{background:var(--bg2)}
 .price-best{color:var(--green);font-weight:700}
+.td-actions{white-space:nowrap;position:sticky;right:0;background:var(--surface);box-shadow:-3px 0 6px rgba(44,26,14,.04);z-index:2;padding:8px 12px}
 .price-worst{color:var(--red)}
 @media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.form-grid-3{grid-template-columns:1fr 1fr}.grid-2,.grid-3{grid-template-columns:1fr}}
 @media(max-width:768px){
@@ -144,9 +146,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
   .nav-item{flex-direction:column;gap:0;padding:0 10px;font-size:0;min-width:44px;border-radius:6px;white-space:nowrap;text-align:center;flex-shrink:0;height:44px;justify-content:center}
   .nav-icon{width:18px;height:18px;opacity:.85}
   .main{padding-bottom:56px;min-height:100vh}
-  .topbar{padding:12px 16px;position:sticky;top:0;z-index:100}
+  .topbar{padding:12px 16px;position:sticky;top:0;z-index:10}
   .topbar-title{font-size:18px}.topbar-sub{display:none}
-  .page-content{padding:16px}
+  .page-content{padding:16px;padding-bottom:24px}
   .stats-row{grid-template-columns:repeat(2,1fr)!important;gap:10px}
   .stat-card{padding:12px 14px}.stat-value{font-size:18px!important}
   .grid-2,.grid-3{grid-template-columns:1fr!important}
@@ -365,7 +367,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
     </div>
     <!-- TAB HISTORIAL -->
     <div id="ciclo-tab-lista">
-      <div class="card" style="overflow:hidden">
+      <div class="card" style="overflow:visible">
         <div class="card-body" style="padding:0;overflow-x:auto">
           <table style="width:100%;border-collapse:collapse;font-size:13px">
             <thead><tr style="background:var(--bg2);text-align:left">
@@ -400,7 +402,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
         <div class="stat-card"><div class="stat-label">Observados</div><div class="stat-value" id="cal-stat-obs" style="color:var(--amber)">0</div></div>
         <div class="stat-card"><div class="stat-label">Rechazados</div><div class="stat-value" id="cal-stat-rech" style="color:#c0392b">0</div></div>
       </div>
-      <div class="card" style="overflow:hidden">
+      <div class="card" style="overflow:visible">
         <div class="card-body" style="padding:0;overflow-x:auto">
           <table style="width:100%;border-collapse:collapse;font-size:13px">
             <thead><tr style="background:var(--bg2);text-align:left">
@@ -452,8 +454,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
       <button class="tab" onclick="switchStockTab('movimientos',this)">Movimientos</button>
       <button class="tab" onclick="switchStockTab('alertas',this)">Alertas</button>
     </div>
-    <div id="si-tab-inventario"><div class="card" style="overflow:hidden"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Insumo</th><th style="padding:10px 14px">Categoría</th><th style="padding:10px 14px;text-align:right">Stock actual</th><th style="padding:10px 14px;text-align:right">Stock mín.</th><th style="padding:10px 14px;text-align:right">Precio/kg</th><th style="padding:10px 14px;text-align:right">Valor total</th><th style="padding:10px 14px">Estado</th><th style="padding:10px 14px"></th></tr></thead><tbody id="si-tbody"></tbody></table></div></div></div>
-    <div id="si-tab-movimientos" style="display:none"><div class="card" style="overflow:hidden"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Insumo</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px;text-align:right">Cantidad</th><th style="padding:10px 14px;text-align:right">Precio/kg</th><th style="padding:10px 14px">Referencia</th><th style="padding:10px 14px">Nota</th><th style="padding:10px 14px">Acciones</th></tr></thead><tbody id="si-mov-tbody"></tbody></table></div></div></div>
+    <div id="si-tab-inventario"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Insumo</th><th style="padding:10px 14px">Categoría</th><th style="padding:10px 14px;text-align:right">Stock actual</th><th style="padding:10px 14px;text-align:right">Stock mín.</th><th style="padding:10px 14px;text-align:right">Precio/kg</th><th style="padding:10px 14px;text-align:right">Valor total</th><th style="padding:10px 14px">Estado</th><th style="padding:10px 14px"></th></tr></thead><tbody id="si-tbody"></tbody></table></div></div></div>
+    <div id="si-tab-movimientos" style="display:none"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Insumo</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px;text-align:right">Cantidad</th><th style="padding:10px 14px;text-align:right">Precio/kg</th><th style="padding:10px 14px">Referencia</th><th style="padding:10px 14px">Nota</th><th style="padding:10px 14px">Acciones</th></tr></thead><tbody id="si-mov-tbody"></tbody></table></div></div></div>
     <div id="si-tab-alertas" style="display:none"><div id="si-alertas-content" class="grid-3"></div></div>
   </div>
 </div>
@@ -481,8 +483,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
       <button class="tab active" onclick="switchTermTab('inventario',this)">Inventario</button>
       <button class="tab" onclick="switchTermTab('movimientos',this)">Movimientos</button>
     </div>
-    <div id="st-tab-inventario"><div class="card" style="overflow:hidden"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Producto</th><th style="padding:10px 14px">Presentación</th><th style="padding:10px 14px;text-align:right">Stock (u)</th><th style="padding:10px 14px;text-align:right">Costo/u</th><th style="padding:10px 14px;text-align:right">P. mayorista</th><th style="padding:10px 14px;text-align:right">P. público</th><th style="padding:10px 14px;text-align:right">Valor stock</th><th style="padding:10px 14px"></th></tr></thead><tbody id="st-tbody"></tbody></table></div></div></div>
-    <div id="st-tab-movimientos" style="display:none"><div class="card" style="overflow:hidden"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Producto</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px;text-align:right">Unidades</th><th style="padding:10px 14px;text-align:right">Precio/u</th><th style="padding:10px 14px;text-align:right">Total</th><th style="padding:10px 14px">Canal</th><th style="padding:10px 14px">Nota</th></tr></thead><tbody id="st-mov-tbody"></tbody></table></div></div></div>
+    <div id="st-tab-inventario"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Producto</th><th style="padding:10px 14px">Presentación</th><th style="padding:10px 14px;text-align:right">Stock (u)</th><th style="padding:10px 14px;text-align:right">Costo/u</th><th style="padding:10px 14px;text-align:right">P. mayorista</th><th style="padding:10px 14px;text-align:right">P. público</th><th style="padding:10px 14px;text-align:right">Valor stock</th><th style="padding:10px 14px"></th></tr></thead><tbody id="st-tbody"></tbody></table></div></div></div>
+    <div id="st-tab-movimientos" style="display:none"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Producto</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px;text-align:right">Unidades</th><th style="padding:10px 14px;text-align:right">Precio/u</th><th style="padding:10px 14px;text-align:right">Total</th><th style="padding:10px 14px">Canal</th><th style="padding:10px 14px">Nota</th></tr></thead><tbody id="st-mov-tbody"></tbody></table></div></div></div>
   </div>
 </div>
 
@@ -567,7 +569,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
       <button class="tab" onclick="switchFinTab('pe',this)">Punto de equilibrio</button>
     </div>
     <div id="fin-tab-movs">
-      <div class="card" style="overflow:hidden"><div class="card-body" style="padding:0;overflow-x:auto">
+      <div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
           <thead><tr style="background:var(--bg2);text-align:left">
             <th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px">Concepto</th>
@@ -626,7 +628,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
         </div></div>
       </div>
       <div class="card" style="margin-bottom:16px"><div class="card-body" id="socias-saldo" style="text-align:center;padding:24px 20px"></div></div>
-      <div class="card" style="overflow:hidden"><div class="card-header"><div class="card-title">Detalle por socia</div></div>
+      <div class="card" style="overflow:visible"><div class="card-header"><div class="card-title">Detalle por socia</div></div>
         <div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Socia</th><th style="padding:10px 14px">Concepto</th><th style="padding:10px 14px">Categoría</th><th style="padding:10px 14px;text-align:right">Monto</th></tr></thead><tbody id="socias-tbody"></tbody></table></div>
       </div>
     </div>
@@ -1630,7 +1632,7 @@ function renderCiclosTabla() {
       <td style="padding:10px 14px;text-align:right"><span class="badge badge-green">${c.pctRend?.toFixed(1)||(c.kgSalida/c.kgEntrada*100).toFixed(1)}%</span></td>
       <td style="padding:10px 14px">${calidadBadge(c.calidad)}</td>
       <td style="padding:10px 14px">${estadoBadge(c.estado)}</td>
-      <td style="padding:10px 14px;white-space:nowrap">
+      <td class="td-actions" style="padding:10px 14px;white-space:nowrap">
         <select style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);cursor:pointer" onchange="cambiarEstado('${c.id}',this.value)">
           ${['En proceso','Finalizado','En stock','Vendido'].map(s=>`<option ${c.estado===s?'selected':''}>${s}</option>`).join('')}
         </select>
@@ -2170,7 +2172,7 @@ function renderFinanzas() {
         <td style="padding:10px 14px;font-size:12px;color:var(--text3)">${m.categoria||'—'}</td>
         <td style="padding:10px 14px;font-size:12px;color:var(--text3)">${m.socio||'—'}</td>
         <td style="padding:10px 14px;font-size:12px;color:var(--text3);font-style:italic">${m.nota||''}</td>
-        <td style="padding:10px 14px"><button class="btn btn-icon" style="color:var(--text3);font-size:13px" onclick="deleteFinMov('${m.id}')">✕</button></td>
+        <td class="td-actions" style="padding:10px 14px"><button class="btn btn-icon" style="color:var(--text3);font-size:13px" onclick="openEditEgreso('${m.id}')" title="Editar">✏</button> <button class="btn btn-icon" style="color:var(--text3);font-size:13px" onclick="deleteFinMov('${m.id}')" title="Eliminar">✕</button></td>
       </tr>`).join(''):`<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text3)">Sin movimientos</td></tr>`;
   }
   renderPuntoEquilibrio();
@@ -2491,7 +2493,7 @@ function renderMP() {
       <td>${i.unidad}</td>
       <td>${i.proveedor||'—'}</td>
       <td>${i.fecha}</td>
-      <td style="white-space:nowrap">
+      <td class="td-actions" style="padding:10px 14px">
         <button class="btn btn-sm btn-secondary" onclick="openEditMP(${i.id})">✏ Editar</button>
         <button class="btn btn-danger btn-sm" onclick="deleteMP(${i.id})" style="margin-left:4px">✕</button>
       </td>
@@ -2564,7 +2566,7 @@ function renderRend() {
       <td>${r.temp?r.temp+'°C':'—'}</td>
       <td>${r.horas?r.horas+'h':'—'}</td>
       <td style="max-width:160px;font-size:12px;color:var(--text3)">${r.notas||'—'}</td>
-      <td style="white-space:nowrap">
+      <td class="td-actions" style="padding:10px 14px">
         <button class="btn btn-sm btn-secondary" onclick="openEditRend(${r.id})">✏</button>
         <button class="btn btn-danger btn-sm" onclick="deleteRend(${r.id})" style="margin-left:4px">✕</button>
       </td>
@@ -2765,7 +2767,7 @@ function renderCiclosTabla() {
       <td style="padding:10px 14px;text-align:right"><span class="badge badge-green">${c.pctRend?.toFixed(1)||(c.kgSalida/c.kgEntrada*100).toFixed(1)}%</span></td>
       <td style="padding:10px 14px">${calidadBadge(c.calidad)}</td>
       <td style="padding:10px 14px">${estadoBadge(c.estado)}</td>
-      <td style="padding:10px 14px;white-space:nowrap">
+      <td class="td-actions" style="padding:10px 14px;white-space:nowrap">
         <select style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);cursor:pointer" onchange="cambiarEstado('${c.id}',this.value)">
           ${['En proceso','Finalizado','En stock','Vendido'].map(s=>`<option ${c.estado===s?'selected':''}>${s}</option>`).join('')}
         </select>
@@ -2810,7 +2812,7 @@ function renderMovimientosTabla() {
       <td style="padding:10px 14px;text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:var(--text3)">${m.precio_kg?'$'+fmt(m.precio_kg,0):'—'}</td>
       <td style="padding:10px 14px;font-size:12px;color:var(--text3)">${m.referencia||'—'}</td>
       <td style="padding:10px 14px;font-size:12px;color:var(--text3);font-style:italic">${m.nota||''}</td>
-      <td style="white-space:nowrap;padding:10px 14px">
+      <td class="td-actions" style="padding:8px 14px">
         <button class="btn btn-icon btn-sm" onclick="openEditMovimiento('${m.id}')" title="Editar">✏</button>
         <button class="btn btn-icon btn-sm" onclick="deleteMovimiento('${m.id}')" style="color:var(--text3)" title="Eliminar">✕</button>
       </td>
@@ -3267,7 +3269,7 @@ function renderTerminado() {
       <td style="padding:10px 14px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:600">${m.total?'$'+fmt(m.total,0):'—'}</td>
       <td style="padding:10px 14px;font-size:12px;color:var(--text3)">${m.canal||'—'}</td>
       <td style="padding:10px 14px;font-size:12px;color:var(--text3);font-style:italic">${m.nota||''}</td>
-      <td style="white-space:nowrap;padding:10px 14px">
+      <td class="td-actions" style="padding:8px 14px">
         <button class="btn btn-icon btn-sm" onclick="openEditMovTerminado('${m.id}')" title="Editar">✏</button>
         <button class="btn btn-icon btn-sm" onclick="deleteMovTerminado('${m.id}')" style="color:var(--text3)">✕</button>
       </td>
