@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Güerta — Reparando datos…</title>
+<style>
+  body { font-family: monospace; background: #1a1611; color: #c8b99a; padding: 40px; }
+  .ok  { color: #7aaf88; }
+  .err { color: #c0392b; }
+  pre  { background: #2a2218; padding: 16px; border-radius: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h2>🔧 Güerta — Reparando campos de datos de demostración…</h2>
+<pre id="log">Iniciando…</pre>
+<script>
+const log = document.getElementById('log');
+function out(msg, ok=true) {
+  log.innerHTML += `<span class="${ok?'ok':'err'}">${msg}\n</span>`;
+}
+
+try {
+  const raw = localStorage.getItem('guerta_db');
+  if (!raw) { out('⚠ No hay datos en localStorage (guerta_db). Abrí la app primero.', false); throw new Error('no db'); }
+
+  const DB = JSON.parse(raw);
+
+  // ——— Fix rendimientos ———
+  let rendFix = 0;
+  DB.rendimientos = (DB.rendimientos || []).map(r => {
+    if (r.mp_id && !r.insumo_id) {
+      rendFix++;
+      return {
+        ...r,
+        insumo_id:    r.mp_id,
+        insumo_nombre:r.mp_nombre || r.insumo_nombre || '—',
+        entrada:      r.entrada   || r.entrada_kg || 0,
+        salida:       r.salida    || r.salida_kg  || 0,
+        pct:          r.pct       || r.pctRend    || 0,
+      };
+    }
+    return r;
+  });
+  out(`✔ Rendimientos: ${rendFix} registros corregidos (total ${DB.rendimientos.length})`);
+
+  // ——— Build ratio map from rendimientos ———
+  const ratioMap = {};
+  DB.rendimientos.forEach(r => {
+    if (!ratioMap[r.insumo_id]) ratioMap[r.insumo_id] = [];
+    ratioMap[r.insumo_id].push(r.ratio);
+  });
+  const avgRatio = id => {
+    const arr = ratioMap[id];
+    return arr && arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 6;
+  };
+
+  // ——— Build MP price map ———
+  const mpMap = {};
+  (DB.materiaprima || []).forEach(m => { mpMap[m.id] = m; });
+
+  // ——— Fix recetas ———
+  let recFix = 0;
+  DB.recetas = (DB.recetas || []).map(rec => {
+    const ings = (rec.ingredientes || []).map(ing => {
+      const oldId   = ing.insumo_id || ing.mp_id;
+      const mp      = mpMap[oldId];
+      const ratio   = avgRatio(oldId);
+      const gramos  = ing.gramos || ing.peso_ing || 0;
+      const costo   = mp ? (gramos / 1000) * ratio * mp.precio_kg : 0;
+      return {
+        insumo_id: oldId,
+        gramos,
+        nombre:    ing.nombre || ing.mp_nombre || mp?.nombre || '—',
+        ratio,
+        costo,
+      };
+    });
+    const costoTotal = ings.reduce((a, i) => a + i.costo, 0);
+    const mgMay = rec.margen_mayorista ?? rec.margen_may ?? 120;
+    const mgPub = rec.margen_publico   ?? rec.margen_pub ?? 200;
+    const needsFix = rec.ingredientes.some(i => i.mp_id && !i.insumo_id || typeof i.gramos === 'undefined');
+    if (needsFix) recFix++;
+    return {
+      ...rec,
+      ingredientes:      ings,
+      costo_produccion:  costoTotal,
+      margen_mayorista:  mgMay,
+      margen_publico:    mgPub,
+      precio_mayorista:  costoTotal * (1 + mgMay / 100),
+      precio_publico:    costoTotal * (1 + mgPub / 100),
+    };
+  });
+  out(`✔ Recetas: ${recFix} recetas con ingredientes corregidos (total ${DB.recetas.length})`);
+  DB.recetas.forEach(r =>
+    out(`   ${r.nombre.padEnd(28)} costo: $${Math.round(r.costo_produccion).toLocaleString('es-AR').padStart(7)} | may: $${Math.round(r.precio_mayorista).toLocaleString('es-AR')} | pub: $${Math.round(r.precio_publico).toLocaleString('es-AR')}`)
+  );
+
+  // ——— Save & redirect ———
+  localStorage.setItem('guerta_db', JSON.stringify(DB));
+  out('\n✅ Datos guardados en localStorage.');
+  out('↩ Redirigiendo a Güerta en 2 segundos…');
+
+  setTimeout(() => {
+    window.location.href = 'index.html';
+  }, 2200);
+
+} catch(e) {
+  if (e.message !== 'no db') out('❌ Error: ' + e.message, false);
+}
+</script>
+</body>
+</html>
