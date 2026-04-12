@@ -280,7 +280,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
   <div class="page-content">
     <div id="alert-mp"></div>
     <div class="card">
-      <div class="card-header"><div><div class="card-title">Insumos registrados</div></div></div>
+      <div class="card-header"><div><div class="card-title">Insumos registrados</div></div><div style="display:flex;gap:8px;align-items:center"><input type="search" id="search-mp" placeholder="🔍 Buscar..." oninput="filtrarMP(this.value)" style="padding:7px 12px;border:1px solid var(--border2);border-radius:8px;font-size:12px;font-family:'Lato',sans-serif;background:var(--surface);width:200px"><button class="btn btn-sm btn-secondary" onclick="exportarCSVMP()">↓ CSV</button></div></div>
       <div class="card-body" style="padding:0"><div class="table-wrap">
         <table><thead><tr><th>Insumo</th><th>Categoría</th><th>Precio / kg</th><th>Unidad compra</th><th>Proveedor ref.</th><th>Última actualiz.</th><th>Acciones</th></tr></thead>
         <tbody id="mp-tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon">◎</div><p>Aún no hay insumos.</p></div></td></tr></tbody></table>
@@ -351,7 +351,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
       <button class="tab" onclick="switchCicloTab('calidad',this)">Control calidad</button>
       <button class="tab" onclick="switchCicloTab('stats',this)">Estadísticas</button>
     </div>
-    <div id="ciclo-tab-lista"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Lote</th><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Producto</th><th style="padding:10px 14px">Máquina</th><th style="padding:10px 14px">Band. 1ª</th><th style="padding:10px 14px">Band. 2ª</th><th style="padding:10px 14px;text-align:right">Kg entrada</th><th style="padding:10px 14px;text-align:right">Kg salida</th><th style="padding:10px 14px;text-align:right">Ratio</th><th style="padding:10px 14px;text-align:right">Rend.</th><th style="padding:10px 14px">Calidad</th><th style="padding:10px 14px">Estado</th><th style="padding:10px 14px"></th></tr></thead><tbody id="ciclos-tbody"></tbody></table></div></div></div>
+    <div id="ciclo-tab-lista"><div style="margin-bottom:10px;display:flex;gap:8px;align-items:center"><input type="search" id="search-ciclos" placeholder="🔍 Buscar lote, producto, estado..." oninput="filtrarCiclos(this.value)" style="flex:1;padding:8px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;font-family:'Lato',sans-serif;background:var(--surface)"><button class="btn btn-sm btn-secondary" onclick="exportarCSVCiclos()">↓ CSV</button></div><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Lote</th><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Producto</th><th style="padding:10px 14px">Máquina</th><th style="padding:10px 14px">Band. 1ª</th><th style="padding:10px 14px">Band. 2ª</th><th style="padding:10px 14px;text-align:right">Kg entrada</th><th style="padding:10px 14px;text-align:right">Kg salida</th><th style="padding:10px 14px;text-align:right">Ratio</th><th style="padding:10px 14px;text-align:right">Rend.</th><th style="padding:10px 14px">Calidad</th><th style="padding:10px 14px">Estado</th><th style="padding:10px 14px"></th></tr></thead><tbody id="ciclos-tbody"></tbody></table></div></div></div>
     <div id="ciclo-tab-lotes" style="display:none"><div id="lotes-grid" class="grid-3"></div></div>
     <div id="ciclo-tab-calidad" style="display:none">
       <div class="stats-row"><div class="stat-card"><div class="stat-label">Controles</div><div class="stat-value" id="cal-stat-total">0</div></div><div class="stat-card accent"><div class="stat-label">Liberados</div><div class="stat-value" id="cal-stat-ok">0</div></div><div class="stat-card"><div class="stat-label">Observados</div><div class="stat-value" id="cal-stat-obs" style="color:var(--amber)">0</div></div><div class="stat-card"><div class="stat-label">Rechazados</div><div class="stat-value" id="cal-stat-rech" style="color:#c0392b">0</div></div></div>
@@ -384,7 +384,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
       <button class="tab" onclick="switchStockTab('alertas',this)">Alertas</button>
     </div>
     <div id="si-tab-inventario"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Insumo</th><th style="padding:10px 14px">Categoría</th><th style="padding:10px 14px;text-align:right">Stock actual</th><th style="padding:10px 14px;text-align:right">Stock mín.</th><th style="padding:10px 14px;text-align:right">Precio/kg</th><th style="padding:10px 14px;text-align:right">Valor total</th><th style="padding:10px 14px">Estado</th><th style="padding:10px 14px"></th></tr></thead><tbody id="si-tbody"></tbody></table></div></div></div>
-    <div id="si-tab-movimientos" style="display:none"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Insumo</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px;text-align:right">Cantidad</th><th style="padding:10px 14px;text-align:right">Precio/kg</th><th style="padding:10px 14px">Referencia</th><th style="padding:10px 14px">Nota</th><th style="padding:10px 14px">Acciones</th></tr></thead><tbody id="si-mov-tbody"></tbody></table></div></div></div>
+    <div id="si-tab-movimientos" style="display:none"><div style="margin-bottom:10px;display:flex;gap:8px;align-items:center"><input type="search" id="search-movs" placeholder="🔍 Buscar insumo, tipo, referencia..." oninput="filtrarMovs(this.value)" style="flex:1;padding:8px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;font-family:'Lato',sans-serif;background:var(--surface)"><button class="btn btn-sm btn-secondary" onclick="exportarCSVMovs()">↓ CSV</button></div><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Insumo</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px;text-align:right">Cantidad</th><th style="padding:10px 14px;text-align:right">Precio/kg</th><th style="padding:10px 14px">Referencia</th><th style="padding:10px 14px">Nota</th><th style="padding:10px 14px">Acciones</th></tr></thead><tbody id="si-mov-tbody"></tbody></table></div></div></div>
     <div id="si-tab-alertas" style="display:none"><div id="si-alertas-content" class="grid-3"></div></div>
   </div>
 </div>
@@ -475,7 +475,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
       <button class="tab" onclick="switchFinTab('pe',this)">Punto de equilibrio</button>
       <button class="tab" onclick="switchFinTab('cashflow',this)">Cash Flow</button>
     </div>
-    <div id="fin-tab-movs"><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px">Concepto</th><th style="padding:10px 14px;text-align:right">Monto</th><th style="padding:10px 14px">Categoría</th><th style="padding:10px 14px">Socia/Vendedor</th><th style="padding:10px 14px">Nota</th><th style="padding:10px 14px">Acciones</th></tr></thead><tbody id="fin-tbody"></tbody></table></div></div></div>
+    <div id="fin-tab-movs"><div style="margin-bottom:10px;display:flex;gap:8px;align-items:center"><input type="search" id="search-fin" placeholder="🔍 Buscar concepto, categoría, socia..." oninput="filtrarFin(this.value)" style="flex:1;padding:8px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;font-family:'Lato',sans-serif;background:var(--surface)"><button class="btn btn-sm btn-secondary" onclick="exportarCSVFin()">↓ CSV</button></div><div class="card" style="overflow:visible"><div class="card-body" style="padding:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg2);text-align:left"><th style="padding:10px 14px">Fecha</th><th style="padding:10px 14px">Tipo</th><th style="padding:10px 14px">Concepto</th><th style="padding:10px 14px;text-align:right">Monto</th><th style="padding:10px 14px">Categoría</th><th style="padding:10px 14px">Socia/Vendedor</th><th style="padding:10px 14px">Nota</th><th style="padding:10px 14px">Acciones</th></tr></thead><tbody id="fin-tbody"></tbody></table></div></div></div>
     <div id="fin-tab-graficos" style="display:none">
       <div class="grid-2">
         <div class="card"><div class="card-header"><div><div class="card-title">Egresos por categoría</div></div><select id="chart-periodo" class="input" style="width:auto;font-size:12px" onchange="renderGraficos()"><option value="30">Últimos 30 días</option><option value="90">Últimos 90 días</option><option value="365">Último año</option><option value="0">Todo</option></select></div><div class="card-body"><div class="chart-container"><canvas id="chart-egresos-cat"></canvas></div></div></div>
@@ -561,7 +561,24 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
         <div style="margin-top:12px;display:flex;gap:8px">
           <button class="btn btn-primary btn-sm" onclick="guardarCostoEnergia()">Guardar como costo fijo mensual</button>
         </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text3)">Tramos T1-G sin subsidio: primeros 90 kWh → $165,21/kWh · 90–310 kWh → $94,70/kWh · &gt;310 kWh → $154,41/kWh · Cargo fijo $1.699,71/mes</div>
+        <div style="margin-top:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div id="edelar-tarifas-texto" style="font-size:11px;color:var(--text3);flex:1"></div>
+          <button class="btn btn-sm btn-secondary" onclick="toggleEdelarEdit()" style="white-space:nowrap;font-size:11px;flex-shrink:0">⚙ Editar tarifas</button>
+        </div>
+        <div id="edelar-edit-panel" style="display:none;margin-top:14px;padding:14px;background:var(--amber-bg);border:1px solid #f0d090;border-radius:10px">
+          <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">Tarifas EDELAR T1-G — editables</div>
+          <div class="form-grid">
+            <div class="field"><label>Cargo fijo ($/mes)</label><input type="number" id="edelar-cargo" step="0.01" min="0" style="font-family:'DM Mono',monospace"></div>
+            <div class="field"><label>Tramo 1: hasta 90 kWh ($/kWh)</label><input type="number" id="edelar-t1" step="0.0001" min="0" style="font-family:'DM Mono',monospace"></div>
+            <div class="field"><label>Tramo 2: 90–310 kWh ($/kWh)</label><input type="number" id="edelar-t2" step="0.0001" min="0" style="font-family:'DM Mono',monospace"></div>
+            <div class="field"><label>Tramo 3: &gt;310 kWh ($/kWh)</label><input type="number" id="edelar-t3" step="0.0001" min="0" style="font-family:'DM Mono',monospace"></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-primary btn-sm" onclick="saveEdelarConfig()">Guardar tarifas</button>
+            <button class="btn btn-sm btn-secondary" onclick="resetEdelarConfig()">Restaurar originales</button>
+            <button class="btn btn-sm" onclick="toggleEdelarEdit()" style="margin-left:auto">Cancelar</button>
+          </div>
+        </div>
       </div>
     </div>
     <!-- Tabla costos -->
@@ -648,6 +665,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2)
       <div class="card-body">
         <div id="cfg-stats" style="font-size:13px;color:var(--text2);margin-bottom:16px"></div>
         <button class="btn btn-danger" onclick="if(confirm('¿Borrar TODOS los datos locales? Esto no se puede deshacer.')){localStorage.clear();location.reload()}">Borrar datos locales</button>
+        <button class="btn btn-secondary" style="margin-top:8px" onclick="fixDemoRecetas()" title="Recalcula costos usando los campos insumo_id/gramos correctos">🔧 Corregir costos de demo</button>
       </div>
     </div>
   </div>
@@ -1247,7 +1265,7 @@ function renderMP() {
 function populateRendInsumos() {
   const sel=document.getElementById('rend-insumo');
   sel.innerHTML='<option value="">— Seleccioná un insumo —</option>'+
-    DB.materiaprima.filter(i=>i.categoria==='fruta').map(i=>`<option value="${i.id}">${i.nombre}</option>`).join('');
+    DB.materiaprima.filter(i=>['fruta','fruto_seco'].includes(i.categoria)).map(i=>`<option value="${i.id}">${i.nombre}</option>`).join('');
 }
 function calcRatio() {
   const entrada=parseFloat(document.getElementById('rend-entrada').value);
@@ -2678,8 +2696,9 @@ const EDELAR = {
 };
 
 function calcEDELAR(kwhMes) {
-  let costo = EDELAR.cargoFijo, restante = kwhMes, anterior = 0;
-  for (const tramo of EDELAR.tramos) {
+  const E = (typeof getEDELAR === 'function') ? getEDELAR() : EDELAR;
+  let costo = E.cargoFijo, restante = kwhMes, anterior = 0;
+  for (const tramo of E.tramos) {
     if (restante <= 0) break;
     const enTramo = Math.min(restante, tramo.hasta - anterior);
     costo += enTramo * tramo.precio;
@@ -2688,7 +2707,7 @@ function calcEDELAR(kwhMes) {
   }
   return {
     sinIVA: costo,
-    conIVA: costo * (1 + EDELAR.iva),
+    conIVA: costo * (1 + E.iva),
     kwh: kwhMes,
   };
 }
@@ -2701,6 +2720,7 @@ function calcularEnergia() {
 
   const kwhMaquinas = maquinas * 4 * horas * dias; // 4kW por máquina
   const kwhTotal    = kwhMaquinas + base;
+  const E           = (typeof getEDELAR === 'function') ? getEDELAR() : EDELAR;
   const resultado   = calcEDELAR(kwhTotal);
 
   const el = document.getElementById('ener-resultado');
@@ -2708,19 +2728,19 @@ function calcularEnergia() {
 
   let desglose = '';
   let restante = kwhTotal, anterior = 0;
-  EDELAR.tramos.forEach(t => {
+  E.tramos.forEach(t => {
     if (restante <= 0) return;
     const en = Math.min(restante, t.hasta - anterior);
-    desglose += `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--bg2)"><span>${fmt(anterior,0)}–${t.hasta===Infinity?'∞':fmt(t.hasta,0)} kWh: ${fmt(en,1)} kWh × $${t.precio.toFixed(2)}</span><span style="font-family:'DM Mono',monospace">$${fmt(en*t.precio,0)}</span></div>`;
+    desglose += `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--bg2)"><span>${fmt(anterior,0)}\u2013${t.hasta===Infinity?'\u221e':fmt(t.hasta,0)} kWh: ${fmt(en,1)} kWh \u00d7 $${t.precio.toFixed(2)}</span><span style="font-family:'DM Mono',monospace">$${fmt(en*t.precio,0)}</span></div>`;
     restante -= en; anterior = t.hasta;
   });
 
   el.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
       <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Consumo máquinas</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Consumo m\u00e1quinas</div>
         <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:600">${fmt(kwhMaquinas,0)} kWh/mes</div>
-        <div style="font-size:11px;color:var(--text3)">${maquinas} DA48B × 4kW × ${horas}h × ${dias}d</div>
+        <div style="font-size:11px;color:var(--text3)">${maquinas} DA48B \u00d7 4kW \u00d7 ${horas}h \u00d7 ${dias}d</div>
       </div>
       <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Consumo total</div>
@@ -2730,16 +2750,21 @@ function calcularEnergia() {
       <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Costo estimado</div>
         <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:600;color:var(--amber)">$${fmt(resultado.conIVA,0)}</div>
-        <div style="font-size:11px;color:var(--text3)">con IVA · $${fmt(resultado.sinIVA,0)} sin IVA</div>
+        <div style="font-size:11px;color:var(--text3)">con IVA \u00b7 $${fmt(resultado.sinIVA,0)} sin IVA</div>
       </div>
     </div>
     <div style="font-size:12px;margin-bottom:6px;font-weight:600;color:var(--text2)">Desglose tarifario T1-G:</div>
     ${desglose}
-    <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0"><span>Cargo fijo</span><span style="font-family:'DM Mono',monospace">$${fmt(EDELAR.cargoFijo,0)}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0"><span>Cargo fijo</span><span style="font-family:'DM Mono',monospace">$${fmt(E.cargoFijo,0)}</span></div>
     <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px solid var(--border);margin-top:4px;font-weight:600"><span>Subtotal sin IVA</span><span style="font-family:'DM Mono',monospace">$${fmt(resultado.sinIVA,0)}</span></div>
     <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span style="color:var(--text3)">IVA 21%</span><span style="font-family:'DM Mono',monospace;color:var(--text3)">$${fmt(resultado.sinIVA*0.21,0)}</span></div>
     <div style="display:flex;justify-content:space-between;font-size:15px;padding:6px 0;border-top:1px solid var(--border);margin-top:2px;font-weight:700"><span>Total con IVA</span><span style="font-family:'DM Mono',monospace;color:var(--accent)">$${fmt(resultado.conIVA,0)}</span></div>`;
+
+  // Actualizar texto dinámico de tarifas
+  const textoEl = document.getElementById('edelar-tarifas-texto');
+  if (textoEl) textoEl.textContent = `Tramos T1-G: hasta 90 kWh \u2192 $${E.tramos[0].precio.toFixed(2)}/kWh \u00b7 90\u2013310 kWh \u2192 $${E.tramos[1].precio.toFixed(2)}/kWh \u00b7 >310 kWh \u2192 $${E.tramos[2].precio.toFixed(2)}/kWh \u00b7 Cargo fijo $${E.cargoFijo.toFixed(2)}/mes`;
 }
+
 
 function guardarCostoEnergia() {
   const maquinas = parseFloat(document.getElementById('ener-maquinas')?.value) || 3;
@@ -3518,7 +3543,7 @@ function cuotaActual(cred) {
 // ════════════════════════════════════════════════════════
 
 (function aplicarV4C() {
-  if (localStorage.getItem('guerta_v4c_ver') === '4c-final') return;
+  if (localStorage.getItem('guerta_v4c_ver') === '4c-final' || DB.config?.v4c === '4c-final') return;
 
   // ── PASO 1: Limpiar activos CFI placeholder del V4B ──
   ['ACT-CFI-001','ACT-CFI-002','ACT-CFI-003',
@@ -3671,6 +3696,8 @@ function cuotaActual(cred) {
     });
   }
 
+  if (!DB.config) DB.config = {};
+  DB.config.v4c = '4c-final';
   saveDB();
 
   localStorage.setItem('guerta_v4c_ver', '4c-final');
@@ -3696,19 +3723,216 @@ function cuotaActual(cred) {
 // ════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+// MIGRACIÓN DE CAMPOS DEMO (mp_id → insumo_id, peso_ing → gramos)
+// Corre siempre para garantizar costos actualizados
+// ════════════════════════════════════════════════════════
+(function migrarCamposDemo() {
+  // — Fix rendimientos: mp_id → insumo_id —
+  DB.rendimientos = DB.rendimientos.map(r => {
+    if (!r.insumo_id && r.mp_id) {
+      return { ...r,
+        insumo_id:    r.mp_id,
+        insumo_nombre:r.mp_nombre || r.insumo_nombre || '—',
+        entrada:      r.entrada   || r.entrada_kg    || 0,
+        salida:       r.salida    || r.salida_kg     || 0,
+        pct:          r.pct       || r.pctRend        || 0,
+      };
+    }
+    return r;
+  });
+
+  // — Build avg ratio and MP maps —
+  const ratioMap = {};
+  DB.rendimientos.forEach(r => { (ratioMap[r.insumo_id] = ratioMap[r.insumo_id]||[]).push(r.ratio); });
+  const avgRatio = id => { const a=ratioMap[id]; return a&&a.length?a.reduce((x,y)=>x+y,0)/a.length:6; };
+  const mpMap = {};
+  DB.materiaprima.forEach(m => { mpMap[m.id] = m; });
+
+  // — Recalcular costos de TODAS las recetas (siempre) —
+  DB.recetas = DB.recetas.map(rec => {
+    const ings = (rec.ingredientes||[]).map(ing => {
+      const id    = ing.insumo_id || ing.mp_id;   // acepta ambos campos
+      const mp    = mpMap[id];
+      const ratio = avgRatio(id);
+      const gramos = (ing.gramos != null) ? ing.gramos : (ing.peso_ing || 0);
+      const costo  = mp ? (gramos/1000)*ratio*mp.precio_kg : 0;
+      return { insumo_id:id, gramos, nombre:ing.nombre||(mp?.nombre)||'—', ratio, costo };
+    });
+    const ct  = ings.reduce((a,i)=>a+i.costo, 0);
+    const mgM = rec.margen_mayorista ?? rec.margen_may ?? 120;
+    const mgP = rec.margen_publico   ?? rec.margen_pub ?? 200;
+    return { ...rec, ingredientes:ings, costo_produccion:ct,
+      margen_mayorista:mgM, margen_publico:mgP,
+      precio_mayorista:ct*(1+mgM/100), precio_publico:ct*(1+mgP/100) };
+  });
+
+  saveDB();
+  console.log('[migración] Costos recalculados:', DB.recetas.map(r=>r.nombre+':$'+Math.round(r.costo_produccion)).join(' | '));
+})();
+
+renderAll(); // render datos locales inmediatamente
+
 const supabaseOk=initSupabase();
-if(supabaseOk){updateSyncStatus('syncing');pullFromSupabase().then(p=>{renderAll();updateSyncStatus(p?'ok':'error');});}
-else updateSyncStatus('offline');
-renderAll();
+if(supabaseOk){
+  updateSyncStatus('syncing');
+  pullFromSupabase().then(p=>{ if(p) renderAll(); updateSyncStatus(p?'ok':'error'); });
+} else {
+  updateSyncStatus('offline');
+}
 setTimeout(()=>{ calcularEnergia(); renderPuntoEquilibrio(); actualizarNumMaquinasUI(); },400);
+
+
+// ════════════════════════════════════════════════════════
+// BÚSQUEDA / FILTRO EN TABLAS
+// ════════════════════════════════════════════════════════
+function filtrarTablaGen(rows, query) {
+  const q = query.toLowerCase().trim();
+  rows.forEach(tr => { tr.style.display = !q || tr.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+}
+function filtrarMP(q)     { filtrarTablaGen([...document.querySelectorAll('#mp-tbody tr')],     q); }
+function filtrarCiclos(q) { filtrarTablaGen([...document.querySelectorAll('#ciclos-tbody tr')], q); }
+function filtrarMovs(q)   { filtrarTablaGen([...document.querySelectorAll('#si-mov-tbody tr')], q); }
+function filtrarFin(q)    { filtrarTablaGen([...document.querySelectorAll('#fin-tbody tr')],    q); }
+
+// ════════════════════════════════════════════════════════
+// EXPORTAR CSV
+// ════════════════════════════════════════════════════════
+function exportCSV(headers, rows, filename) {
+  const esc = v => { const s = String(v??'').replace(/\r?\n/g,' '); return (s.includes(',') || s.includes('"')) ? `"${s.replace(/"/g,'""')}"` : s; };
+  const csv = [headers, ...rows].map(r => r.map(esc).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href);
+}
+function exportarCSVMP() {
+  const cats = {fruta:'Fruta fresca',fruto_seco:'Fruto seco',envase:'Envase',otro:'Otro'};
+  exportCSV(
+    ['Insumo','Categoría','Precio/kg ($)','Unidad compra','Proveedor','Últ. actualiz.'],
+    DB.materiaprima.map(i=>[i.nombre,cats[i.categoria]||i.categoria,i.precio_kg,i.unidad,i.proveedor||'',i.fecha]),
+    'guerta_insumos.csv');
+}
+function exportarCSVCiclos() {
+  exportCSV(
+    ['Lote','Fecha','Producto','Máquina','Band.1ª','Band.2ª','Kg entrada','Kg salida','Ratio','Rendimiento %','Calidad','Estado'],
+    [...DB.ciclos].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).map(c=>
+      [c.lote||('#'+c.nro),c.fecha,c.producto,c.maquina,c.band1||0,c.band2||0,c.kgEntrada,c.kgSalida,
+       c.ratio?.toFixed(3)||'',(c.pctRend||(c.kgSalida/c.kgEntrada*100)).toFixed(1),c.calidad||'',c.estado]),
+    'guerta_ciclos.csv');
+}
+function exportarCSVMovs() {
+  exportCSV(
+    ['Fecha','Insumo','Tipo','Cantidad (kg)','Precio/kg ($)','Referencia','Nota'],
+    [...DB.movimientos].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).map(m=>
+      [m.fecha,m.mp_nombre,m.tipo_label||m.tipo,m.cantidad_kg,m.precio_kg||'',m.referencia||'',m.nota||'']),
+    'guerta_movimientos_insumos.csv');
+}
+function exportarCSVFin() {
+  exportCSV(
+    ['Fecha','Tipo','Concepto','Monto ($)','Categoría','Socia/Vendedor','Nota'],
+    [...DB.finanzas].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).map(m=>
+      [m.fecha,m.tipo,m.concepto,m.monto,m.categoria||'',m.socio||m.vendedorNombre||'',m.nota||'']),
+    'guerta_finanzas.csv');
+}
+
+// ════════════════════════════════════════════════════════
+// EDELAR — TARIFAS EDITABLES (persiste en DB.config.edelar)
+// ════════════════════════════════════════════════════════
+function getEDELAR() { return DB.config?.edelar || EDELAR; }
+function toggleEdelarEdit() {
+  const el = document.getElementById('edelar-edit-panel'); if (!el) return;
+  const visible = el.style.display !== 'none';
+  el.style.display = visible ? 'none' : 'block';
+  if (!visible) loadEdelarForm();
+}
+function loadEdelarForm() {
+  const E = getEDELAR();
+  document.getElementById('edelar-cargo').value = E.cargoFijo;
+  document.getElementById('edelar-t1').value    = E.tramos[0].precio;
+  document.getElementById('edelar-t2').value    = E.tramos[1].precio;
+  document.getElementById('edelar-t3').value    = E.tramos[2].precio;
+}
+function saveEdelarConfig() {
+  const cargo=parseFloat(document.getElementById('edelar-cargo').value);
+  const t1=parseFloat(document.getElementById('edelar-t1').value);
+  const t2=parseFloat(document.getElementById('edelar-t2').value);
+  const t3=parseFloat(document.getElementById('edelar-t3').value);
+  if([cargo,t1,t2,t3].some(v=>isNaN(v)||v<0)){showAlert('alert-costfijos','error','Valores de tarifa inválidos.');return;}
+  if(!DB.config)DB.config={};
+  DB.config.edelar={cargoFijo:cargo,tramos:[{hasta:90,precio:t1},{hasta:310,precio:t2},{hasta:Infinity,precio:t3}],iva:0.21};
+  saveDB();
+  document.getElementById('edelar-edit-panel').style.display='none';
+  calcularEnergia();
+  showAlert('alert-costfijos','success','Tarifas EDELAR actualizadas.');
+}
+function resetEdelarConfig() {
+  if(!confirm('¿Restaurar tarifas EDELAR a los valores oficiales (Resolución EUCOP N° 001 · Feb 2026)?'))return;
+  if(DB.config)delete DB.config.edelar;
+  saveDB();
+  calcularEnergia();
+  document.getElementById('edelar-edit-panel').style.display='none';
+  showAlert('alert-costfijos','success','Tarifas restauradas a valores oficiales.');
+}
+
+// ═══════════════════════════════════════════════════
+// FIX DEMO: convierte mp_id/peso_ing a insumo_id/gramos
+// ═══════════════════════════════════════════════════
+function fixDemoRecetas() {
+  try {
+    DB.rendimientos = DB.rendimientos.map(function(r) {
+      if (r.mp_id && !r.insumo_id) {
+        var f = Object.assign({}, r);
+        f.insumo_id = r.mp_id; f.insumo_nombre = r.mp_nombre || '-';
+        f.entrada = r.entrada || r.entrada_kg || 0;
+        f.salida  = r.salida  || r.salida_kg  || 0;
+        f.pct     = r.pct     || r.pctRend    || 0;
+        return f;
+      }
+      return r;
+    });
+    var rm = {};
+    DB.rendimientos.forEach(function(r) { if (!rm[r.insumo_id]) rm[r.insumo_id]=[]; rm[r.insumo_id].push(r.ratio); });
+    function _ar(id) { var a=rm[id]; if(!a||!a.length)return 6; var s=0; for(var i=0;i<a.length;i++)s+=a[i]; return s/a.length; }
+    var mpm = {};
+    DB.materiaprima.forEach(function(m) { mpm[m.id]=m; });
+    var log = [];
+    DB.recetas = DB.recetas.map(function(rec) {
+      var ings = (rec.ingredientes||[]).map(function(ing) {
+        var id=ing.insumo_id||ing.mp_id, mp2=mpm[id], ratio=_ar(id);
+        var gr=(ing.gramos!=null&&ing.gramos!==undefined)?Number(ing.gramos):(Number(ing.peso_ing)||0);
+        var c=mp2?(gr/1000)*ratio*mp2.precio_kg:0;
+        return {insumo_id:id,gramos:gr,nombre:ing.nombre||(mp2&&mp2.nombre)||'Insumo',ratio:ratio,costo:c};
+      });
+      var ct=ings.reduce(function(a,i){return a+i.costo;},0);
+      var mgM=(rec.margen_mayorista!=null)?rec.margen_mayorista:(rec.margen_may!=null?rec.margen_may:120);
+      var mgP=(rec.margen_publico!=null)?rec.margen_publico:(rec.margen_pub!=null?rec.margen_pub:200);
+      log.push(rec.nombre+':$'+Math.round(ct));
+      var u=Object.assign({},rec);
+      u.ingredientes=ings; u.costo_produccion=ct;
+      u.margen_mayorista=mgM; u.margen_publico=mgP;
+      u.precio_mayorista=ct*(1+mgM/100); u.precio_publico=ct*(1+mgP/100);
+      return u;
+    });
+    saveDB();
+    if(typeof renderRecetas==='function')renderRecetas();
+    if(typeof renderCostos==='function')renderCostos();
+    renderDashboard();
+    showAlert('alert-cfg','success','Costos OK: '+log.join(' | '));
+    console.log('[fixDemoRecetas]',log.join(' | '));
+  } catch(err) {
+    showAlert('alert-cfg','error','Error: '+err.message);
+    console.error('[fixDemoRecetas]',err);
+  }
+}
 
 </script>
 
 <script type="module">
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 window.supabaseClient={createClient};
-const ok=initSupabase();
-if(ok){updateSyncStatus('syncing');pullFromSupabase().then(p=>{if(p)renderAll();updateSyncStatus(p?'ok':'error');});}
+// Supabase ya inicializado en el script principal al proveer createClient.
+// El init es manejado por el bloque INIT más arriba cuando supabaseClient está disponible.
+const _ok=initSupabase();
+if(_ok){updateSyncStatus('syncing');pullFromSupabase().then(p=>{if(p)renderAll();updateSyncStatus(p?'ok':'error');});}
 </script>
 
 </body>
